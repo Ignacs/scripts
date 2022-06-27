@@ -2,7 +2,13 @@ START=`date`
 echo "Build Ezmesh..."
 FINAL_LOG=the_last.log
 fileName="build_ezmesh_`date +%m%d_%H%M`"
-TARGET=RTF6125VW
+# TARGET=RTF6125VW
+TARGET=RG5125VW
+
+if [ `hostname` == "pve" ]; then
+	echo "Cannot run in phyical environment"
+	exit 0
+fi
 
 if [ -f done ] ; then
 	echo '[done] is exist, copy first'
@@ -11,7 +17,7 @@ fi
 
 sudo rm -f app/gpl/wifi/qcom/qsdk-spf11.4/done
 EZMESH_BUILD=`sudo find app/gpl/wifi/qcom/qsdk-spf11.4/build_dir -name qca-ezmesh-all_g `
-# /home/ignacs/lab/RTF6125VW_ezmesh/app/gpl/wifi/qcom/qsdk-spf11.4/build_dir/target-aarch64-poky-linux_glibc/qca-ezmesh-all_g/install/
+# /home/ignacs/lab//app/gpl/wifi/qcom/qsdk-spf11.4/build_dir/target-aarch64-poky-linux_glibc/qca-ezmesh-all_g/install/
 for i in $EZMESH_BUILD
 do
 	echo $i
@@ -26,10 +32,10 @@ find app/gpl/wifi/qcom/qsdk-spf11.4/build_dir/target-aarch64-poky-linux_glibc -n
 # sudo find app/gpl/wifi/qcom/qsdk-spf11.4/build_dir/target-aarch64-poky-linux_glibc -name qca-wsplcd-all-g | xargs sudo rm -rf
 
 ###
-# sudo make ASP_MODEL=RTF6125VW ASP_PROFILE=SEI -C app/private/wdwdv3 all &> $fileName
-sudo make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private wdwdv3 qcom_related_install qcom_ezmesh_install &> $fileName
-# sudo make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private/wdwdv3 qcom_ezmesh_install &> $fileName
-sudo make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private dpmd &>> $fileName
+# sudo make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/private/wdwdv3 all &> $fileName
+# make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private wdwdv3 qcom_ezmesh_install &> $fileName
+make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private/wdwdv3 qcom_ezmesh_install &> $fileName
+# make ASP_MODEL=$TARGET ASP_PROFILE=SEI ASP_MAX_JOBS=AUTO -C app/private dpmd &>> $fileName
 ###
 
 cp app/gpl/wifi/qcom/qsdk-spf11.4/build_dir/target-aarch64-poky-linux_glibc/qca-ezmesh-all_g/ipkg-aarch64_cortex-a53_neon-vfpv4/qca-ezmesh/usr/sbin/ezmesh  /home/ignacs/tftp_folder
