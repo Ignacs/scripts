@@ -3,6 +3,12 @@ FINAL_LOG=the_last.log
 TARGET=RTF6125VW
 echo "Build $TARGET Application..."
 fileName="build_$TARGET_app_`date +%m%d_%H%M`"
+
+if [ -f done ] ; then
+	echo '[done] is exist, copy first'
+	exit 0
+fi
+
 # make -C app/gpl/ppp-2.4.7/ clean
 # sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/gpl ppp clean &> $fileName
 # sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI clean_app &> $fileName
@@ -11,7 +17,8 @@ fileName="build_$TARGET_app_`date +%m%d_%H%M`"
 # sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/private wdw_util clean &>> $fileName
 # sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/private dpmd clean &>> $fileName
 # sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI wdwdv3 wdv_util dpmd &>> $fileName
-sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/gpl ppp &> $fileName
+sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/private dpm_util &>> $fileName
+# sudo time make ASP_MODEL=$TARGET ASP_PROFILE=SEI -C app/gpl ppp &> $fileName
 
 STOP=`date`
 echo ""
@@ -34,3 +41,6 @@ ls -al ./targets/RTF6125VW/SEI/builds/rootfs/bin/pppd
 rm $FINAL_LOG
 ln -s $fileName $FINAL_LOG
 vi $FINAL_LOG  +/:\ error:
+
+# generating done file,  to prevent build without syncing
+touch done
