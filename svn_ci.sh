@@ -96,7 +96,7 @@ else
 fi
 
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-vi -O ./merge_list $CI_MESG
+vi -O "$CI_LIST" $CI_MESG
 
 svn up `cat $CI_LIST`
 
