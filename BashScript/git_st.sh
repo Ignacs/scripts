@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+# warning /bin/bash != /bin/sh
 
 root_folder=$PWD
 rm $root_folder/git_st 2>/dev/null
@@ -20,17 +21,24 @@ do
 
 	RELATIVE_PATH=$(realpath -m --relative-to=$root_folder .)
 
+	git st -s > git_basic_st
+	FNUM=`wc -l < git_basic_st`
+	echo "total : " $FNUM
 	# the outer () is declared as array
 	# the inter () with dollar-sign is the result of command
-	F_ST=($(git st -s . | cut -d ' ' -f 2))  # files status
-	F_PATH=($(git st -s . | cut -d ' ' -f 3))  # files path name
+	# the sed command use ':' as delimiter , and it will remove the sign '.'
+	F_ST=($( git st --porcelain=v2 . | cut -d ' ' -f 2 | sed 's:\.::' ))  # files status
+#	F_ST=$( git st --porcelain=v2 . | cut -d ' ' -f 2  )  # files status
 
-	for idx in ${!F_ST[@]};
+	F_PATH=($(git st --porcelain=v2 . | cut -d ' ' -f 9 ))  # files path name
+
+ 	# for idx in {1..$FNUM}
+	for (( idx=1 ; idx <= $FNUM ; idx++ ))
 	do
-	#	echo -n "$idx " >> $root_folder/git_st
-		echo -n "${F_ST[$idx]} " >> $root_folder/git_st
-		echo "$RELATIVE_PATH/${F_PATH[$idx]}" >> $root_folder/git_st
-	done
+# 		echo -n "$idx " >> $root_folder/git_st
+ 		echo -n "${F_ST[$idx]} " >> $root_folder/git_st
+ 		echo "$RELATIVE_PATH/${F_PATH[$idx]}" >> $root_folder/git_st
+ 	done
 	cd - >/dev/null
 
 done
