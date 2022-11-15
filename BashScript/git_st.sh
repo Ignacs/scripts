@@ -12,7 +12,7 @@ echo "# R = renamed" >> $root_folder/git_st
 echo "# C = copied" >> $root_folder/git_st
 echo "# U = updated but unmerged" >> $root_folder/git_st
 
-GIT_REPOs=$(find . -name .git -type d)
+GIT_REPOs=$(find . -name .git -type d -not -name extern)
 for proj in $GIT_REPOs
 do
 	cd $proj/../
