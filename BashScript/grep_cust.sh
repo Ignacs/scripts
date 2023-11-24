@@ -10,14 +10,22 @@ echo "Try to grep -- $*"
 # SUBFN=c,h
 
 #echo "  -- filename argu: $SUBFN"
-INC_FN=$(echo '--include=*.'{c,h,sh})
-# INC_FN=$(echo '--include=*.'{c,h})
+# INC_FN=$(echo '--include=*.'{c,h,sh})
+GREP_INC_FN=$(echo '--include=*.'{c,h})
 # INC_FN=$(echo --include=*.c)
+# INC_FN=$(echo --include=*.h)
 # INC_FN=$(echo --include=*vimrc)
-echo "  -- filename argu: $INC_FN"
 
+RG_INC_FN=$(echo -g '*.c' -g '*.h')
+#RG_INC_FN='-g *.c' '-g *.h'
 # working format
-grep "$*" ./ -RsnI $INC_FN ./ > grep_cust_list 2>/dev/null
+# grep "$*" ./ -RsnI $GREP_INC_FN ./ > grep_cust_list 2>/dev/null
+
+echo "  -- filename argu: $RG_INC_FN"
+#rg  --vimgrep $RG_INC_FN "$*" ./ > grep_cust_list 2>/dev/null
+rg  --vimgrep $RG_INC_FN "$*" ./ > grep_cust_list 2>/dev/null
+
+# rg  --vimgrep --type $INC_FN -g ./ > grep_cust_list 2>/dev/null
 
 # INC_FN='c h'
 # REF=INC_FN
