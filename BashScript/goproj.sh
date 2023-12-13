@@ -31,21 +31,28 @@ else
 	# find the git repo"
 	START_DIR=$PWD
 	dir=$PWD
-	# echo "now within $dir"
+	echo "now within $dir"
 	GIT_REPO_EXIST=0
 	while true
 	do
-	    dir=$(dirname $PWD)
 	    if [ -d $dir/.git ] ; then
 	  	  	GIT_REPO_EXIST=1;
+			echo "Found .git within $dir"
 	  	  	break;
+		else
+			echo "There is not .git within $dir"
 	    fi
+	    dir=$(dirname $PWD)
 		if [ $dir = / ] ; then
 			echo "Reach /";
 			break;
 		fi
+		if [ $dir = ~ ] ; then
+			echo "Reach ~";
+			break;
+		fi
 	    cd $dir;
-	    # echo "now within $dir"
+	    echo "now within $dir"
 	done
 
 	if [  "$GIT_REPO_EXIST" = "1" ] ; then
