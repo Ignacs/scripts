@@ -15,17 +15,16 @@ TOOL=ctags
 
 echo "Tool :" $TOOL
 
+echo "Argc : $#"
+echo "Arga : $@"
+# SCOPE_FILE=FILESET.txt
+SCOPE_FILE=cscope.files
 
-SCOPE_FILE=FILESET.txt
-if [ -n "$1" ] ; then
-	echo "Create file map : " $SCOPE_FILE
-    for i in $@ ; do
-        echo "Source code directory : " $i
-		echo ""
-        # find $i -name "Makefile" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -name "*.cc" -name "*.m" > $SCOPE_FILE
-#        find $i -maxdepth 1  -name "*.h" -o -name "*.c" | xargs chown `whoami`
-        find $i -maxdepth 1  -name "*.h" -o -name "*.c"  >> $SCOPE_FILE
-    done
+
+if [ $# -gt 1 ] ; then
+	echo "Create file map : " $SCOPE_FILE;
+	find $@ -name "Makefile" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -name "*.cc" -name "*.m" > $SCOPE_FILE;
+	PATH_UPDATE=.
 else
 
 	# find the git repo"
@@ -64,12 +63,16 @@ else
 	fi
 
     echo "Source code directory : $PATH_UPDATE"
-    echo "Create file map : $PATH_UPDATE"
+    echo "Create file map : $PATH_UPDATE/$SCOPE_FILE"
 	echo ""
     # find $PATH_UPDATE -name "Makefile" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -o -name "*.cc" -name "*.m" >> $SCOPE_FILE
     #find $PATH_UPDATE -maxdepth 1 -name "*.h" -o -name "*.c"  > $SCOPE_FILE
 #    find $PATH_UPDATE  -name "*.h" -o -name "*.c"  | xargs chown `whoami`
-    find $PATH_UPDATE  -name "*.h" -o -name "*.c"  > $SCOPE_FILE
+	echo "Searching source files under $PATH_UPDATE"
+	echo "find $PATH_UPDATE  -name \"*.h\" -o -name \"*.c\"  -o -name \"*.cpp\" "
+	pushd $PATH_UPDATE
+    find . -name "*.h" -o -name "*.c"  -o -name "*.cpp" > $PATH_UPDATE/$SCOPE_FILE
+	popd
 fi
 
 # echo "Be sure all of file's owner"
@@ -78,7 +81,9 @@ fi
 
 # rm tags
 #ctags -R --verbose --append --c-kinds=+px --c++-kinds=+px --fields=+iamSl --extras=+fq --exclude=.svn,.d,.o,.git
-ctags -R  --append --c-kinds=+px --c++-kinds=+px --fields=+iamSl --extras=+fq --exclude=.svn,.d,.o,.git
 # gtags-cscope -Rbkq -i $SCOPE_FILE
-cscope -Rbkq -i $SCOPE_FILE
-gtags -f $SCOPE_FILE
+# cscope -Rbkq -i $PATH_UPDATE/$SCOPE_FILE
+# gtags -f $SCOPE_FILE
+
+$TOOL -R  --append --c-kinds=+px --c++-kinds=+px --fields=+iamSl --extras=+fq --exclude=.svn,.d,.o,.git -F $PATH_UPDATE/$SCOPE_FILE
+cscope -bkq -i $PATH_UPDATE/$SCOPE_FILE
